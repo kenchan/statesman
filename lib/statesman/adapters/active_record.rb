@@ -72,7 +72,7 @@ module Statesman
 
         ::ActiveRecord::Base.transaction do
           @observer.execute(:before, from, to, transition)
-          unset_old_most_recent unless parent_model.state_machine.class.initial_state == from
+          unset_old_most_recent if parent_model.state_machine.class.initial_state != from || transitions_for_parent.exists?(most_recent: true)
           transition.save!
           @last_transition = transition
           @observer.execute(:after, from, to, transition)
